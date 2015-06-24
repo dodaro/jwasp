@@ -34,5 +34,5 @@ public interface Constants {
     public static final int GRINGO_LINE_SEPARATOR = 0;
     public static final String GRINGO_BPLUS = "B+";
     public static final String GRINGO_BMINUS = "B-";
-    public static final String ASP4J = "ASP4J 1.0";
+    public static final String JWASP = "JWASP 1.0";
 }

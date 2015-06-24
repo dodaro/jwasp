@@ -69,7 +69,7 @@ public class ASPSolver extends PBSolver {
 
 	public int solve() {
 		try {
-			System.out.println(Constants.ASP4J);
+			System.out.println(Constants.JWASP);
 			return solve_() ? COHERENT : INCOHERENT;
 		} catch (TimeoutException e) {
 			System.err.println("Killed: Bye!");
