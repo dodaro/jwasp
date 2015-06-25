@@ -42,6 +42,7 @@ public class ProgramBuilder {
 	private int numberOfVarsNoAux;
 	private ASPSolver solver;
 	private DependencyGraph dependencyGraph;
+	private int numberOfLevels;
 
 	public ProgramBuilder(ASPSolver solver) {
 		rules = new Vec<Rule>();
@@ -50,6 +51,7 @@ public class ProgramBuilder {
 		numberOfVars = 0;
 		this.solver = solver;
 		this.dependencyGraph = DependencyGraph.getInstance();
+		this.numberOfLevels = 0;
 	}
 
 	public void addVariable(int var) {
@@ -310,5 +312,13 @@ public class ProgramBuilder {
 		newRule.addAtomInHead(headAtom);
 		newRule.setBody(body);
 		rules.push(newRule);
+	}
+
+	public void addOptimizationRule(VecInt literals, Vec<Long> weights) {
+		solver.addOptimizationLevel();
+		for(int i = 0; i < literals.size(); i++) {
+			solver.addOptimizationLiteral(literals.get(i), weights.get(i), numberOfLevels);
+		}
+		numberOfLevels++;
 	}
 }

@@ -54,6 +54,6 @@ public class CompetitionPrinter extends ASPAnswerSetPrinter{
     }
     
 	@Override
-    public void printNumberOfAnswerSets(int numberOfAnswerSets) {    	
+    public void printNumberOfAnswerSets(int numberOfAnswerSets) {
     }
 }

@@ -35,6 +35,8 @@ import it.unical.mat.jwasp.utils.Util;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigInteger;
+import java.util.HashMap;
 
 import org.sat4j.core.Vec;
 import org.sat4j.core.VecInt;
@@ -52,12 +54,15 @@ public class ASPSolver extends PBSolver {
 	public final static int TIMEOUT = 0;
 	public final static int COHERENT = 1;
 	public final static int INCOHERENT = 2;
+	public final static int OPTIMUM_FOUND = 3;
 	public static int EXIT_CODE = 0;
 
 	private static final long serialVersionUID = 779695783693900331L;
 	private ASPAnswerSetPrinter printer;
 	private Vec<SCComponent> components;
 	private Vec<SCCStructure> structures;
+	private Vec<Vec<OptimizationLiteral>> optimizationLiterals;
+	private HashMap<Integer, OptimizationLiteral> varToOptLiteral;
 
 	public ASPSolver(LearningStrategy<PBDataStructureFactory> learner,
 			PBDataStructureFactory dsf, IOrder order, RestartStrategy restarter) {
@@ -65,12 +70,25 @@ public class ASPSolver extends PBSolver {
 		printer = new ASPAnswerSetPrinter();
 		components = new Vec<SCComponent>();
 		structures = new Vec<SCCStructure>();
+		optimizationLiterals = new Vec<Vec<OptimizationLiteral>>();
+		varToOptLiteral = new HashMap<Integer, OptimizationLiteral>();
 	}
 
 	public int solve() {
+		System.out.println(Constants.JWASP);		
 		try {
-			System.out.println(Constants.JWASP);
-			return solve_() ? COHERENT : INCOHERENT;
+			if (!parse())
+				return INCOHERENT;
+			try {
+				initSCCStructures();
+			} catch (ContradictionException e) {
+				printer.foundIncoherence();
+				return INCOHERENT;
+			}
+			if(optimizationLiterals.isEmpty())
+				return solve_() ? COHERENT : INCOHERENT;
+			else
+				return solveWeakConstraints_();
 		} catch (TimeoutException e) {
 			System.err.println("Killed: Bye!");
 			return TIMEOUT;
@@ -91,16 +109,13 @@ public class ASPSolver extends PBSolver {
 		}
 	}
 
-	private boolean solve_() throws TimeoutException {
-		if (!parse())
-			return false;
-		try {
-			initSCCStructures();
-		} catch (ContradictionException e) {
-			printer.foundIncoherence();
-			return false;
-		}
+	private boolean solve_() throws TimeoutException {		
 		return this.enumerateAnswerSets(Options.models) > 0;
+	}
+	
+	private int solveWeakConstraints_() throws TimeoutException {
+		WeakConstraintsInterface weakConstraintsInterface = new WeakConstraintsInterface(this);
+		return weakConstraintsInterface.solve();		
 	}
 
 	private boolean parse() {
@@ -164,12 +179,49 @@ public class ASPSolver extends PBSolver {
 	@Override
 	public int newVar(int var) {
 		while (var >= structures.size()) {
-			structures.push(new SCCStructure());
+			structures.push(new SCCStructure());			
 		}
-
 		return super.newVar(var);
 	}
+	
+	public void printCosts(Vec<BigInteger> costs) {
+		this.printer.printCosts(costs);
+	}
+	
+	public void foundOptimum() {
+		this.printer.foundOptimum();
+	}
+	
+	public void printAnswerSet(int[] model) {
+		this.printer.foundAnswerSet(model);
+	}
+	
+	public void foundIncoherence() {
+		this.printer.foundIncoherence();
+	}
+	
+	public void addOptimizationLevel() {
+		this.optimizationLiterals.push(new Vec<OptimizationLiteral>());
+	}
+	
+	public int getNumberOfLevels() {		
+		return this.optimizationLiterals.size();
+	}
+	
+	public void addOptimizationLiteral(int literal, long weight, int level) {
+		OptimizationLiteral opt = new OptimizationLiteral(literal, weight);
+		varToOptLiteral.put(literal, opt);
+		this.optimizationLiterals.get(level).push(opt);
+	}
+	
+	public Vec<OptimizationLiteral> getOptimizationLiterals(int level) {
+		return this.optimizationLiterals.get(level);
+	}	
 
+	public OptimizationLiteral getOptimizationOfLiteral(int literal) {
+		return varToOptLiteral.get(literal);
+	}
+	
 	public void addComponent(SCComponent component) {
 		this.components.push(component);
 	}
@@ -253,5 +305,9 @@ public class ASPSolver extends PBSolver {
 
 	public void setPrinter(ASPAnswerSetPrinter printer) {
 		this.printer = printer;
+	}
+
+	public void removeOptimizationLiteral(int literal, int level) {
+		optimizationLiterals.get(level).remove(getOptimizationOfLiteral(literal));
 	}
 }

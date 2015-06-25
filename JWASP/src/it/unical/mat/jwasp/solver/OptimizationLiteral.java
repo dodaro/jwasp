@@ -21,18 +21,32 @@
  *
  ******************************************************************************
  */
-package it.unical.mat.jwasp.utils;
+package it.unical.mat.jwasp.solver;
 
-public interface Constants {
+import java.math.BigInteger;
 
-    public static final int GRINGO_NORMAL_RULE_ID = 1;
-    public static final int GRINGO_COUNT_CONSTRAINT_RULE_ID = 2;
-    public static final int GRINGO_CHOICE_RULE_ID = 3;
-    public static final int GRINGO_SUM_CONSTRAINT_RULE_ID = 5;
-    public static final int GRINGO_OPTIMIZATION_RULE_ID = 6;
-    public static final int GRINGO_DISJUNCTIVE_RULE_ID = 8;
-    public static final int GRINGO_LINE_SEPARATOR = 0;
-    public static final String GRINGO_BPLUS = "B+";
-    public static final String GRINGO_BMINUS = "B-";
-    public static final String JWASP = "JWASP 1.1";
+public class OptimizationLiteral {
+	private int literal;
+	private BigInteger weight;
+	
+	public OptimizationLiteral(int literal, long weight) {
+		this.literal = literal;
+		this.weight = BigInteger.valueOf(weight);
+	}
+
+	public int getLiteral() {
+		return literal;
+	}
+
+	public void setLiteral(int literal) {
+		this.literal = literal;
+	}
+
+	public BigInteger getWeight() {
+		return weight;
+	}
+
+	public void setWeight(BigInteger weight) {
+		this.weight = weight;
+	}	
 }

@@ -35,6 +35,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+import org.sat4j.core.Vec;
+import org.sat4j.core.VecInt;
 import org.sat4j.specs.ContradictionException;
 
 public class ASPGringoParser {
@@ -93,9 +95,8 @@ public class ASPGringoParser {
                     readDisjunctiveRule();
                     break;
                 case Constants.GRINGO_OPTIMIZATION_RULE_ID:
-                    throw new BadInputException("Unsupported rule!");
-				// readOptimizationRule();
-                // break;
+                    readOptimizationRule();
+                    break;
                 case Constants.GRINGO_LINE_SEPARATOR:
                     loop = false;
                     break;
@@ -299,6 +300,49 @@ public class ASPGringoParser {
         addCurrentAggregate();
     }
 
-	// private void readOptimizationRule() {
-    // }	
+	 private void readOptimizationRule() {
+		 //first value is 0
+	 	int next = 2;
+        int size, negativeSize, tmp;
+        long weight;
+        size = Integer.parseInt(line[next++]);
+        negativeSize = Integer.parseInt(line[next++]);
+        
+        int counter = 0;
+        
+        VecInt literals = new VecInt();        
+        while( counter < negativeSize )
+		{
+	        tmp = Integer.parseInt(line[next++]);
+	        updateMax( tmp );
+	        literals.push(-tmp);
+	        counter++;
+	    }
+		
+        while( counter < size )
+	    {
+        	tmp = Integer.parseInt(line[next++]);
+	        updateMax( tmp );
+	        literals.push( tmp );
+	        counter++;
+	    }
+
+        Vec<Long> weights = new Vec<Long>();
+	    counter = 0;
+	    while( counter < negativeSize )
+	    {
+	    	weight = Long.parseLong(line[next++]);	        
+	        weights.push(weight);
+	        ++counter;
+	    }
+		    
+	    while( counter < size )
+	    {
+	    	weight = Long.parseLong(line[next++]);
+	        weights.push(weight);
+	        ++counter;
+	    }
+		
+	    builder.addOptimizationRule( literals, weights );
+     }	
 }

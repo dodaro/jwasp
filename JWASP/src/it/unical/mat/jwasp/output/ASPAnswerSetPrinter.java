@@ -23,6 +23,10 @@
  */
 package it.unical.mat.jwasp.output;
 
+import java.math.BigInteger;
+
+import org.sat4j.core.Vec;
+
 import it.unical.mat.jwasp.utils.Util;
 
 public class ASPAnswerSetPrinter {
@@ -52,5 +56,23 @@ public class ASPAnswerSetPrinter {
     
     public void printNumberOfAnswerSets(int numberOfAnswerSets) {
     	System.out.println("Models: " + numberOfAnswerSets);
+    }
+    
+    public void printCosts(Vec<BigInteger> costs) {
+    	StringBuilder optimumCost = new StringBuilder();
+    	int level = 1;
+    	optimumCost.append("COST");
+    	for(int i = costs.size() - 1; i >= 0; i--) {
+    		optimumCost.append(" ");
+    		optimumCost.append(costs.get(i));
+    		optimumCost.append("@");
+    		optimumCost.append(level);
+    		level++;
+    	}
+    	System.out.println(optimumCost.toString());
+    }
+    
+    public void foundOptimum() {
+    	System.out.println("OPTIMUM FOUND");
     }
 }
