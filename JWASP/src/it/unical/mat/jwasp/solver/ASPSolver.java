@@ -256,6 +256,10 @@ public class ASPSolver extends PBSolver {
 	public boolean isVariableInComponent(int var, SCComponent component) {
 		return this.structures.get(var).getComponent() == component;
 	}
+	
+	public boolean isTrueInModel(int lit) {
+		return lit < 0 ? !this.model(-lit) : this.model(lit);		
+	}
 
 	public boolean isTrue(int lit) {
 		return truthValue(lit) == Lbool.TRUE;

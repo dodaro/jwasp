@@ -32,7 +32,7 @@ public class BadInputException extends Exception {
 
     String message;
 
-    public BadInputException() {
+    public BadInputException() {    	
         message = "";
     }
 

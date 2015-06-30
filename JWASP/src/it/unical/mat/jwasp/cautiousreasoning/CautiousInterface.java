@@ -51,18 +51,19 @@ public class CautiousInterface {
 	}
 	
 	private void reduceCandidates() {
-		int j = 0;
+		int j = 0;		
 	    for( int i = 0; i < candidates.size(); i++ )
 	    {
 	    	int v = candidates.get(i);
-	        candidates.set(j, v);
-	        if( solver.isTrue( v ) )
-		        j++;	        
+	    	candidates.set(j, v);
+	        if( solver.model( v ) )
+		        j++;
 	    }
 	    candidates.shrinkTo( j );
 	}
 
 	private int ict() throws TimeoutException {
+		reduceCandidates();
 		solver.unrollToZero();
 		VecInt assumps = new VecInt(1);
 		while( !candidates.isEmpty() )
@@ -70,7 +71,7 @@ public class CautiousInterface {
 	        int v = candidates.last();
 	        if( !solver.isUndefined( v ) )
 	        {
-	            if( solver.isTrue( v ) )
+	            if( solver.model( v ) )
 	                addAnswer( v );
 	            
 	            candidates.pop();
@@ -80,13 +81,11 @@ public class CautiousInterface {
 	        assumps.push(-v);
 	        boolean isSat = solver.isSatisfiable(assumps, true);
 	        
+	        candidates.pop();
 	        if( isSat )
 	            reduceCandidates();
 	        else
-	        {
 	            addAnswer( v );
-	            candidates.pop();
-	        }
 	        assumps.clear();	        
 	    }
 		solver.printCautiousConsequences(answers);

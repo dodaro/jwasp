@@ -53,8 +53,8 @@ public class CompetitionPrinter extends ASPAnswerSetPrinter{
 	public void printCautiousConsequences(VecInt cautiousConsequences) {
 		StringBuilder modelString = new StringBuilder();
 		for (int i = 0; i < cautiousConsequences.size(); i++) {
-	            modelString.append(cautiousConsequences.get(i));
-                modelString.append(". ");            
+            modelString.append(Util.getName(cautiousConsequences.get(i)));
+            modelString.append(". ");            
         }
 
         ASPSolver.EXIT_CODE = 10;

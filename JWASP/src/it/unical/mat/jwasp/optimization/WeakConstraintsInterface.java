@@ -144,8 +144,8 @@ public class WeakConstraintsInterface {
 		Vec<OptimizationLiteral> optLiterals = solver.getOptimizationLiterals(level);
 		BigInteger value = BigInteger.valueOf(0);
 		for(int i = 0; i < optLiterals.size(); i++) {			
-			int lit = optLiterals.get(i).getLiteral();						
-			if(solver.isTrue(lit))
+			int lit = optLiterals.get(i).getLiteral();
+			if(solver.isTrueInModel(lit))
 				value.add(solver.getOptimizationOfLiteral(lit).getWeight());
 		}		
 		return value;
