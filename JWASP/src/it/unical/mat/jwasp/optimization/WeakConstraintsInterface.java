@@ -21,7 +21,9 @@
  *
  ******************************************************************************
  */
-package it.unical.mat.jwasp.solver;
+package it.unical.mat.jwasp.optimization;
+
+import it.unical.mat.jwasp.solver.ASPSolver;
 
 import java.math.BigInteger;
 

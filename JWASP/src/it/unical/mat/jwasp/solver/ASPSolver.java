@@ -23,9 +23,12 @@
  */
 package it.unical.mat.jwasp.solver;
 
+import it.unical.mat.jwasp.cautiousreasoning.CautiousInterface;
 import it.unical.mat.jwasp.datastructures.Aggregate;
 import it.unical.mat.jwasp.datastructures.SCCStructure;
 import it.unical.mat.jwasp.datastructures.SCComponent;
+import it.unical.mat.jwasp.optimization.OptimizationLiteral;
+import it.unical.mat.jwasp.optimization.WeakConstraintsInterface;
 import it.unical.mat.jwasp.output.ASPAnswerSetPrinter;
 import it.unical.mat.jwasp.parser.ASPGringoParser;
 import it.unical.mat.jwasp.parser.BadInputException;
@@ -63,6 +66,7 @@ public class ASPSolver extends PBSolver {
 	private Vec<SCCStructure> structures;
 	private Vec<Vec<OptimizationLiteral>> optimizationLiterals;
 	private HashMap<Integer, OptimizationLiteral> varToOptLiteral;
+	private VecInt cautiousCandidates;
 
 	public ASPSolver(LearningStrategy<PBDataStructureFactory> learner,
 			PBDataStructureFactory dsf, IOrder order, RestartStrategy restarter) {
@@ -72,6 +76,7 @@ public class ASPSolver extends PBSolver {
 		structures = new Vec<SCCStructure>();
 		optimizationLiterals = new Vec<Vec<OptimizationLiteral>>();
 		varToOptLiteral = new HashMap<Integer, OptimizationLiteral>();
+		cautiousCandidates = new VecInt();
 	}
 
 	public int solve() {
@@ -85,6 +90,11 @@ public class ASPSolver extends PBSolver {
 				printer.foundIncoherence();
 				return INCOHERENT;
 			}
+			if(Options.cautiousAlgorithm!=null) {
+				CautiousInterface c = new CautiousInterface(cautiousCandidates, this);
+				return c.computeCautiousConsequences();
+			}
+			
 			if(optimizationLiterals.isEmpty())
 				return solve_() ? COHERENT : INCOHERENT;
 			else
@@ -196,6 +206,10 @@ public class ASPSolver extends PBSolver {
 		this.printer.foundAnswerSet(model);
 	}
 	
+	public void printCautiousConsequences(VecInt cautiousConsequences) {
+		this.printer.printCautiousConsequences(cautiousConsequences);
+	}
+	
 	public void foundIncoherence() {
 		this.printer.foundIncoherence();
 	}
@@ -255,6 +269,10 @@ public class ASPSolver extends PBSolver {
 		return truthValue(lit) == Lbool.UNDEFINED;
 	}
 
+	public void unrollToZero() {
+		this.cancelUntil(0);
+	}
+	
 	@Override
 	public void foundConflict() {
 		for (int i = 0; i < propagatorsToVisit.size(); i++)
@@ -309,5 +327,9 @@ public class ASPSolver extends PBSolver {
 
 	public void removeOptimizationLiteral(int literal, int level) {
 		optimizationLiterals.get(level).remove(getOptimizationOfLiteral(literal));
+	}
+
+	public void addCautiousCandidate(int var) {
+		cautiousCandidates.push(var);
 	}
 }

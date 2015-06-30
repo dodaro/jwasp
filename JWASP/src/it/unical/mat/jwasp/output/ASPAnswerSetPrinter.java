@@ -26,6 +26,7 @@ package it.unical.mat.jwasp.output;
 import java.math.BigInteger;
 
 import org.sat4j.core.Vec;
+import org.sat4j.core.VecInt;
 
 import it.unical.mat.jwasp.utils.Util;
 
@@ -49,7 +50,21 @@ public class ASPAnswerSetPrinter {
 
         System.out.println("{" + modelString.toString() + "}");
     }
+    
+    public void printCautiousConsequences(VecInt cautiousConsequences) {
+    	StringBuilder modelString = new StringBuilder();
+        for (int i = 0; i < cautiousConsequences.size(); i++) {
+            modelString.append(Util.getName(cautiousConsequences.get(i)));
+            modelString.append(", ");            
+        }
 
+        if (modelString.length() > 2) {
+            modelString.replace(modelString.length() - 2, modelString.length(), "");
+        }
+
+        System.out.println("{" + modelString.toString() + "}");
+	}    
+    
     public void foundIncoherence() {
         System.out.println("INCOHERENT");
     }

@@ -23,6 +23,8 @@
  */
 package it.unical.mat.jwasp.output;
 
+import org.sat4j.core.VecInt;
+
 import it.unical.mat.jwasp.solver.ASPSolver;
 import it.unical.mat.jwasp.utils.Util;
 
@@ -46,6 +48,19 @@ public class CompetitionPrinter extends ASPAnswerSetPrinter{
         System.out.println("ANSWER");
         System.out.println(modelString.toString());
     }
+	
+	@Override
+	public void printCautiousConsequences(VecInt cautiousConsequences) {
+		StringBuilder modelString = new StringBuilder();
+		for (int i = 0; i < cautiousConsequences.size(); i++) {
+	            modelString.append(cautiousConsequences.get(i));
+                modelString.append(". ");            
+        }
+
+        ASPSolver.EXIT_CODE = 10;
+        System.out.println("ANSWER");
+        System.out.println(modelString.toString());        
+	}   
 
 	@Override
     public void foundIncoherence() {

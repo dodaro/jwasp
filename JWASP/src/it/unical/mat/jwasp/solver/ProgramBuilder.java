@@ -28,6 +28,8 @@ import it.unical.mat.jwasp.datastructures.DependencyGraph;
 import it.unical.mat.jwasp.datastructures.Rule;
 import it.unical.mat.jwasp.datastructures.SCCStructure;
 import it.unical.mat.jwasp.datastructures.SCComponent;
+import it.unical.mat.jwasp.utils.Options;
+import it.unical.mat.jwasp.utils.Util;
 
 import org.sat4j.core.Vec;
 import org.sat4j.core.VecInt;
@@ -320,5 +322,15 @@ public class ProgramBuilder {
 			solver.addOptimizationLiteral(literals.get(i), weights.get(i), numberOfLevels);
 		}
 		numberOfLevels++;
+	}
+	
+	public void addCautiousCandidate(int var) {
+		solver.addCautiousCandidate(var);
+	}
+
+	public void setVarName(int id, String name) {
+		if(Options.cautiousAlgorithm!=null)
+			this.addCautiousCandidate(id);
+		Util.setName(id, name);
 	}
 }

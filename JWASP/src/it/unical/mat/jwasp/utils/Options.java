@@ -47,4 +47,7 @@ public class Options {
     
     @Parameter(names = "-output", description = "Output format: [wasp, competition]")
     public static String output = "wasp";
+    
+    @Parameter(names = "-cautiousalgorithm", description = "Cautious algorithm: [ict]")
+    public static String cautiousAlgorithm = null;
 }

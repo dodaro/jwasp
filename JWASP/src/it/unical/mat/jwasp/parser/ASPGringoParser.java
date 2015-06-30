@@ -27,7 +27,6 @@ import it.unical.mat.jwasp.datastructures.Aggregate;
 import it.unical.mat.jwasp.datastructures.Rule;
 import it.unical.mat.jwasp.solver.ProgramBuilder;
 import it.unical.mat.jwasp.utils.Constants;
-import it.unical.mat.jwasp.utils.Util;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -125,7 +124,7 @@ public class ASPGringoParser {
             String[] splitName = name.split(" ");
             int id = Integer.parseInt(splitName[0]);
             updateMax(id);
-            Util.setName(id, splitName[1]);
+            builder.setVarName(id, splitName[1]);            
         }
     }
 
