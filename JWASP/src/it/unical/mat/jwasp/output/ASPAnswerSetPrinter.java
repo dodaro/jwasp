@@ -28,11 +28,17 @@ import java.math.BigInteger;
 import org.sat4j.core.Vec;
 import org.sat4j.core.VecInt;
 
+import it.unical.mat.jwasp.solver.ASPSolver;
+import it.unical.mat.jwasp.utils.Constants;
 import it.unical.mat.jwasp.utils.Util;
 
 public class ASPAnswerSetPrinter {
 
     public ASPAnswerSetPrinter() {
+    }
+    
+    public void greetings() {
+    	System.out.println(Constants.JWASP);
     }
 
     public void foundAnswerSet(int[] model) {
@@ -66,7 +72,7 @@ public class ASPAnswerSetPrinter {
 	}    
     
     public void foundIncoherence() {
-        System.out.println("INCOHERENT");
+        System.out.println(Constants.INCOHERENT);
     }
     
     public void printNumberOfAnswerSets(int numberOfAnswerSets) {
@@ -76,7 +82,7 @@ public class ASPAnswerSetPrinter {
     public void printCosts(Vec<BigInteger> costs) {
     	StringBuilder optimumCost = new StringBuilder();
     	int level = 1;
-    	optimumCost.append("COST");
+    	optimumCost.append(Constants.COST);
     	for(int i = costs.size() - 1; i >= 0; i--) {
     		optimumCost.append(" ");
     		optimumCost.append(costs.get(i));
@@ -88,6 +94,7 @@ public class ASPAnswerSetPrinter {
     }
     
     public void foundOptimum() {
-    	System.out.println("OPTIMUM FOUND");
+    	ASPSolver.EXIT_CODE = 30;
+    	System.out.println(Constants.OPTIMUM);
     }
 }

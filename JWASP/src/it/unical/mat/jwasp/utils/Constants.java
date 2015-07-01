@@ -34,5 +34,10 @@ public interface Constants {
     public static final int GRINGO_LINE_SEPARATOR = 0;
     public static final String GRINGO_BPLUS = "B+";
     public static final String GRINGO_BMINUS = "B-";
-    public static final String JWASP = "JWASP 1.2.1";
+    public static final String JWASP = "JWASP 1.2.2";
+    public static final String OPTIMUM = "OPTIMUM";
+    public static final String ANSWER = "ANSWER";
+    public static final String INCONSISTENT = "INCONSISTENT";
+    public static final String INCOHERENT = "INCOHERENT";
+    public static final String COST = "COST";
 }

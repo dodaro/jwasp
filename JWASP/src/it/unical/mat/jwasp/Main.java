@@ -27,6 +27,7 @@ import com.beust.jcommander.JCommander;
 
 import it.unical.mat.jwasp.solver.ASPSolver;
 import it.unical.mat.jwasp.solver.ASPSolverFactory;
+import it.unical.mat.jwasp.utils.Constants;
 import it.unical.mat.jwasp.utils.Options;
 
 public class Main {
@@ -35,6 +36,7 @@ public class Main {
         try {
             JCommander jc = new JCommander(new Options(), args);
             if (Options.help) {
+            	System.out.println(Constants.JWASP);
                 jc.usage();
                 return;
             }

@@ -32,7 +32,6 @@ import it.unical.mat.jwasp.optimization.WeakConstraintsInterface;
 import it.unical.mat.jwasp.output.ASPAnswerSetPrinter;
 import it.unical.mat.jwasp.parser.ASPGringoParser;
 import it.unical.mat.jwasp.parser.BadInputException;
-import it.unical.mat.jwasp.utils.Constants;
 import it.unical.mat.jwasp.utils.Options;
 import it.unical.mat.jwasp.utils.Util;
 
@@ -80,7 +79,7 @@ public class ASPSolver extends PBSolver {
 	}
 
 	public int solve() {
-		System.out.println(Constants.JWASP);		
+		printer.greetings();		
 		try {
 			if (!parse())
 				return INCOHERENT;
@@ -125,7 +124,10 @@ public class ASPSolver extends PBSolver {
 	
 	private int solveWeakConstraints_() throws TimeoutException {
 		WeakConstraintsInterface weakConstraintsInterface = new WeakConstraintsInterface(this);
-		return weakConstraintsInterface.solve();		
+		int result = weakConstraintsInterface.solve();
+		if(result==OPTIMUM_FOUND)
+			foundOptimum();
+		return result;
 	}
 
 	private boolean parse() {

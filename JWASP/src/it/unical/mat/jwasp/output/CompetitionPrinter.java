@@ -26,6 +26,7 @@ package it.unical.mat.jwasp.output;
 import org.sat4j.core.VecInt;
 
 import it.unical.mat.jwasp.solver.ASPSolver;
+import it.unical.mat.jwasp.utils.Constants;
 import it.unical.mat.jwasp.utils.Util;
 
 public class CompetitionPrinter extends ASPAnswerSetPrinter{
@@ -33,6 +34,10 @@ public class CompetitionPrinter extends ASPAnswerSetPrinter{
 	public CompetitionPrinter() {
 		super();
 	}
+	
+	@Override
+	public void greetings() {
+    }
 
 	@Override
     public void foundAnswerSet(int[] model) {
@@ -45,7 +50,7 @@ public class CompetitionPrinter extends ASPAnswerSetPrinter{
         }        
 
         ASPSolver.EXIT_CODE = 10;
-        System.out.println("ANSWER");
+        System.out.println(Constants.ANSWER);
         System.out.println(modelString.toString());
     }
 	
@@ -58,14 +63,14 @@ public class CompetitionPrinter extends ASPAnswerSetPrinter{
         }
 
         ASPSolver.EXIT_CODE = 10;
-        System.out.println("ANSWER");
+        System.out.println(Constants.ANSWER);
         System.out.println(modelString.toString());        
 	}   
 
 	@Override
     public void foundIncoherence() {
 		ASPSolver.EXIT_CODE = 20;
-        System.out.println("INCONSISTENT");        
+        System.out.println(Constants.INCONSISTENT);        
     }
     
 	@Override
