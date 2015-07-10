@@ -52,8 +52,8 @@ public class WeakConstraintsInterface {
 			return ASPSolver.INCOHERENT;
 		}
 		
-		int level = 0;
-		while(level < solver.getNumberOfLevels()) {
+		int level = solver.getNumberOfLevels() - 1;
+		while(level >= 0) {
 			lb = BigInteger.ZERO;								
 			boolean res;
 			while(true) {
@@ -69,7 +69,7 @@ public class WeakConstraintsInterface {
 			if(!hardening(level))
 				return ASPSolver.OPTIMUM_FOUND;
 			
-			level++;
+			level--;
 		}
 		return ASPSolver.OPTIMUM_FOUND;
 	}
@@ -84,21 +84,20 @@ public class WeakConstraintsInterface {
 		BigInteger minWeight = BigInteger.valueOf(Long.MAX_VALUE);
 		for(int i = 0; i < unsatCore.size(); i++) {
 			int literal = -unsatCore.get(i);
-			BigInteger weight = solver.getOptimizationOfLiteral(literal).getWeight();
+			BigInteger weight = solver.getOptimizationOfLiteral(literal,level).getWeight();
 			minWeight = minWeight.min(weight);
 		}
 		lb = lb.add(minWeight);
 		
-		VecInt literals = new VecInt(unsatCore.size());
+		VecInt literals = new VecInt(unsatCore.size());		
 		for(int i = 0; i < unsatCore.size(); i++) {
 			int literal = -unsatCore.get(i);
 			literals.push(-literal);
-			BigInteger weight = solver.getOptimizationOfLiteral(literal).getWeight();
+			BigInteger weight = solver.getOptimizationOfLiteral(literal,level).getWeight();
 			if(weight.equals(minWeight))
 				solver.removeOptimizationLiteral(literal, level);
-			else {
-				solver.getOptimizationOfLiteral(literal).setWeight(weight.subtract(minWeight));				
-			}
+			else
+				solver.getOptimizationOfLiteral(literal,level).setWeight(weight.subtract(minWeight));			
 		}
 		
 		int n = literals.size(); 
@@ -134,7 +133,7 @@ public class WeakConstraintsInterface {
 	private void printCosts(int level) {
 		Vec<BigInteger> costsToPrint = new Vec<BigInteger>();
 		costs.copyTo(costsToPrint);
-		for(int i = level + 1; i < solver.getNumberOfLevels(); i++) {
+		for(int i = level - 1; i >= 0; i--) {
 			costsToPrint.set(i, computeCostOfLevel(i));
 		}
 		solver.printCosts(costsToPrint);
@@ -146,7 +145,7 @@ public class WeakConstraintsInterface {
 		for(int i = 0; i < optLiterals.size(); i++) {			
 			int lit = optLiterals.get(i).getLiteral();
 			if(solver.isTrueInModel(lit))
-				value.add(solver.getOptimizationOfLiteral(lit).getWeight());
+				value.add(solver.getOptimizationOfLiteral(lit,level).getWeight());
 		}		
 		return value;
 	}

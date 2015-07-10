@@ -300,7 +300,7 @@ public class ASPGringoParser {
     }
 
 	 private void readOptimizationRule() {
-		 //first value is 0
+		 //first value is 0: ignore next=1
 	 	int next = 2;
         int size, negativeSize, tmp;
         long weight;

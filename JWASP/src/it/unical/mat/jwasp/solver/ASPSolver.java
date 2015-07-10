@@ -64,7 +64,7 @@ public class ASPSolver extends PBSolver {
 	private Vec<SCComponent> components;
 	private Vec<SCCStructure> structures;
 	private Vec<Vec<OptimizationLiteral>> optimizationLiterals;
-	private HashMap<Integer, OptimizationLiteral> varToOptLiteral;
+	private Vec<HashMap<Integer, OptimizationLiteral>> varToOptLiterals;
 	private VecInt cautiousCandidates;
 
 	public ASPSolver(LearningStrategy<PBDataStructureFactory> learner,
@@ -74,7 +74,7 @@ public class ASPSolver extends PBSolver {
 		components = new Vec<SCComponent>();
 		structures = new Vec<SCCStructure>();
 		optimizationLiterals = new Vec<Vec<OptimizationLiteral>>();
-		varToOptLiteral = new HashMap<Integer, OptimizationLiteral>();
+		varToOptLiterals = new Vec<HashMap<Integer,OptimizationLiteral>> ();
 		cautiousCandidates = new VecInt();
 	}
 
@@ -216,8 +216,9 @@ public class ASPSolver extends PBSolver {
 		this.printer.foundIncoherence();
 	}
 	
-	public void addOptimizationLevel() {
+	public void addOptimizationLevel() {		
 		this.optimizationLiterals.push(new Vec<OptimizationLiteral>());
+		this.varToOptLiterals.push(new HashMap<Integer, OptimizationLiteral>());
 	}
 	
 	public int getNumberOfLevels() {		
@@ -226,7 +227,7 @@ public class ASPSolver extends PBSolver {
 	
 	public void addOptimizationLiteral(int literal, long weight, int level) {
 		OptimizationLiteral opt = new OptimizationLiteral(literal, weight);
-		varToOptLiteral.put(literal, opt);
+		varToOptLiterals.get(level).put(literal, opt);
 		this.optimizationLiterals.get(level).push(opt);
 	}
 	
@@ -234,8 +235,8 @@ public class ASPSolver extends PBSolver {
 		return this.optimizationLiterals.get(level);
 	}	
 
-	public OptimizationLiteral getOptimizationOfLiteral(int literal) {
-		return varToOptLiteral.get(literal);
+	public OptimizationLiteral getOptimizationOfLiteral(int literal, int level) {
+		return varToOptLiterals.get(level).get(literal);
 	}
 	
 	public void addComponent(SCComponent component) {
@@ -332,7 +333,7 @@ public class ASPSolver extends PBSolver {
 	}
 
 	public void removeOptimizationLiteral(int literal, int level) {
-		optimizationLiterals.get(level).remove(getOptimizationOfLiteral(literal));
+		optimizationLiterals.get(level).remove(getOptimizationOfLiteral(literal, level));
 	}
 
 	public void addCautiousCandidate(int var) {

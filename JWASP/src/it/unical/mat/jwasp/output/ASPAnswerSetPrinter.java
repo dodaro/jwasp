@@ -81,14 +81,12 @@ public class ASPAnswerSetPrinter {
     
     public void printCosts(Vec<BigInteger> costs) {
     	StringBuilder optimumCost = new StringBuilder();
-    	int level = 1;
     	optimumCost.append(Constants.COST);
     	for(int i = costs.size() - 1; i >= 0; i--) {
     		optimumCost.append(" ");
     		optimumCost.append(costs.get(i));
     		optimumCost.append("@");
-    		optimumCost.append(level);
-    		level++;
+    		optimumCost.append(i + 1);
     	}
     	System.out.println(optimumCost.toString());
     }
