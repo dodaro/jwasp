@@ -51,7 +51,7 @@ public class ASPSolverFactory {
 				new Glucose21Restarts());
 		solver.setSearchParams(new SearchParams(1.1, 100));
 		solver.setSimplifier(solver.EXPENSIVE_SIMPLIFICATION);
-		solver.setLearnedConstraintsDeletionStrategy(solver.glucose);
+		solver.setLearnedConstraintsDeletionStrategy(solver.glucose);		
 		return solver;
 	}
 
@@ -101,6 +101,7 @@ public class ASPSolverFactory {
 		updateDeletionStrategy(solver);
 		updateSimplification(solver);
 		updateOutput(solver);
+		solver.setNumberOfAnswerSets(Options.models);
 		return solver;
 	}
 }

@@ -66,6 +66,7 @@ public class ASPSolver extends PBSolver {
 	private Vec<Vec<OptimizationLiteral>> optimizationLiterals;
 	private Vec<HashMap<Integer, OptimizationLiteral>> varToOptLiterals;
 	private VecInt cautiousCandidates;
+	private Integer numberOfModels;
 
 	public ASPSolver(LearningStrategy<PBDataStructureFactory> learner,
 			PBDataStructureFactory dsf, IOrder order, RestartStrategy restarter) {
@@ -76,20 +77,14 @@ public class ASPSolver extends PBSolver {
 		optimizationLiterals = new Vec<Vec<OptimizationLiteral>>();
 		varToOptLiterals = new Vec<HashMap<Integer,OptimizationLiteral>> ();
 		cautiousCandidates = new VecInt();
+		numberOfModels = new Integer(1);
 	}
 
 	public int solve() {
-		printer.greetings();		
-		try {
-			if (!parse())
-				return INCOHERENT;
-			try {
-				initSCCStructures();
-			} catch (ContradictionException e) {
-				printer.foundIncoherence();
-				return INCOHERENT;
-			}
-			if(Options.cautiousAlgorithm!=null) {
+		try
+		{
+			initSCCStructures();
+			if(!cautiousCandidates.isEmpty()) {
 				CautiousInterface c = new CautiousInterface(cautiousCandidates, this);
 				return c.computeCautiousConsequences();
 			}
@@ -99,9 +94,22 @@ public class ASPSolver extends PBSolver {
 			else
 				return solveWeakConstraints_();
 		} catch (TimeoutException e) {
-			System.err.println("Killed: Bye!");
 			return TIMEOUT;
+		} catch (ContradictionException e) {
+			return INCOHERENT;
 		}
+	}
+	
+	public int parseAndSolve() {
+		printer.greetings();
+		if (!parse())
+			return INCOHERENT;
+		
+		return solve();		
+	}
+	
+	public void setNumberOfAnswerSets(Integer numberOfAnswerSets) {
+		this.numberOfModels = numberOfAnswerSets;
 	}
 
 	private void initSCCStructures() throws ContradictionException {
@@ -119,7 +127,7 @@ public class ASPSolver extends PBSolver {
 	}
 
 	private boolean solve_() throws TimeoutException {		
-		return this.enumerateAnswerSets(Options.models) > 0;
+		return this.enumerateAnswerSets(this.numberOfModels) > 0;
 	}
 	
 	private int solveWeakConstraints_() throws TimeoutException {
@@ -179,6 +187,17 @@ public class ASPSolver extends PBSolver {
 		return numberOfAnswerSets;
 	}
 
+	public boolean hasAnswerSet() throws TimeoutException {
+		printer.startSearch();
+		return solve_();		
+	}
+	
+	public void nextAnswerSet() throws ContradictionException {
+		int[] model = this.model();
+		VecInt clause = Util.flipClause(model);
+		this.addClause(clause);
+	}
+	
 	public void addAggregate(Aggregate aggr) throws ContradictionException {
 		addPseudoBoolean(aggr.getLits(), aggr.getWeights(), true,
 				aggr.getBound());

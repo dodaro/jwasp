@@ -40,6 +40,10 @@ public class ASPAnswerSetPrinter {
     public void greetings() {
     	System.out.println(Constants.JWASP);
     }
+    
+    public void startSearch() {
+    	
+    }
 
     public void foundAnswerSet(int[] model) {
         StringBuilder modelString = new StringBuilder();
@@ -94,5 +98,5 @@ public class ASPAnswerSetPrinter {
     public void foundOptimum() {
     	ASPSolver.EXIT_CODE = 30;
     	System.out.println(Constants.OPTIMUM);
-    }
+    }    
 }

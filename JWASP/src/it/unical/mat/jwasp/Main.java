@@ -41,7 +41,7 @@ public class Main {
                 return;
             }
             ASPSolver solver = ASPSolverFactory.newSolver();
-            solver.solve();
+            solver.parseAndSolve();
         } catch (Exception e) {
             e.printStackTrace();
         }

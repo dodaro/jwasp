@@ -66,6 +66,27 @@ public class ProgramBuilder {
 		}
 	}
 
+	// Be careful: expensive method
+	public void addRuleAndVariables(Rule r) throws ContradictionException {
+		int max = 0;
+		VecInt body = r.getBody();
+		for (int i = 0; i < body.size(); i++) {
+			int var = Math.abs(body.get(i));
+			if (var > max) {
+				max = var;
+			}
+		}
+		VecInt head = r.getHead();
+		for (int i = 0; i < head.size(); i++) {
+			int var = head.get(i);
+			if (var > max) {
+				max = var;
+			}
+		}
+		addVariable(max);
+		addRule(r);
+	}
+
 	public void addRule(Rule r) throws ContradictionException {
 		if (r.isConstraint()) {
 			solver.addClause(r.toClause());
@@ -97,8 +118,7 @@ public class ProgramBuilder {
 
 	private void addEdgeInDependencyGraph(int v1, int v2) {
 		VecInt supp = supportingRules.get(v1);
-		if (!supp.isEmpty()
-				&& (supp.get(0) == Integer.MAX_VALUE || supp.get(0) == 0))
+		if (!supp.isEmpty() && (supp.get(0) == Integer.MAX_VALUE || supp.get(0) == 0))
 			return;
 		dependencyGraph.addEdge(v1, v2);
 	}
@@ -157,8 +177,8 @@ public class ProgramBuilder {
 			}
 			r.remove();
 		}
-	}	
-	
+	}
+
 	private void addSupportingLiteralForHeadAtom(int headAtom, int lit) {
 		if (lit == 0) {
 			supportingRules.get(headAtom).clear();
@@ -259,9 +279,7 @@ public class ProgramBuilder {
 				internalAtoms.set(t, atom);
 				SCCStructure atomStructure = solver.getStructureForAtom(atom);
 				VecInt suppRules = supportingRules.get(atom);
-				if (!suppRules.isEmpty()
-						&& (suppRules.get(0) == Integer.MAX_VALUE || suppRules
-								.get(0) == 0))
+				if (!suppRules.isEmpty() && (suppRules.get(0) == Integer.MAX_VALUE || suppRules.get(0) == 0))
 					continue;
 				else
 					t++;
@@ -273,8 +291,7 @@ public class ProgramBuilder {
 						int lit = suppRules.get(k);
 						if (lit < 0)
 							continue;
-						SCCStructure literalStructure = solver
-								.getStructureForAtom(lit);
+						SCCStructure literalStructure = solver.getStructureForAtom(lit);
 
 						if (literalStructure.getComponent() != component)
 							continue;
@@ -288,8 +305,7 @@ public class ProgramBuilder {
 					size--;
 					for (int k = 0; k < size; k++) {
 						int lit = suppRules.get(k);
-						SCCStructure literalStructure = solver
-								.getStructureForAtom(lit);
+						SCCStructure literalStructure = solver.getStructureForAtom(lit);
 						literalStructure.addCanBeSupportedByThis(lit, atom);
 						literalStructure.addComponentToNotify(-lit, component);
 						atomStructure.addSupporting(lit);
@@ -318,18 +334,18 @@ public class ProgramBuilder {
 
 	public void addOptimizationRule(VecInt literals, Vec<Long> weights) {
 		solver.addOptimizationLevel();
-		for(int i = 0; i < literals.size(); i++) {
+		for (int i = 0; i < literals.size(); i++) {
 			solver.addOptimizationLiteral(literals.get(i), weights.get(i), numberOfLevels);
 		}
 		numberOfLevels++;
 	}
-	
+
 	public void addCautiousCandidate(int var) {
 		solver.addCautiousCandidate(var);
 	}
 
 	public void setVarName(int id, String name) {
-		if(Options.cautiousAlgorithm!=null)
+		if (Options.cautiousAlgorithm != null)
 			this.addCautiousCandidate(id);
 		Util.setName(id, name);
 	}
